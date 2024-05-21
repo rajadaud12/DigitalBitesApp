@@ -1,0 +1,49 @@
+name: flutter_app
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.2.1
+  font_awesome_flutter: ^10.1.0
+  flutter_rating_bar: ^4.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_svg: ^2.0.10+1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/image/Logo.png
+    - assets/vector/sidebar.svg
+    - assets/vector/filter.svg
+    - assets/image/Beverages.png
+    - assets/image/Snacks.png
+    - assets/image/SeaFood.png
+    - assets/image/Desserts.png
+    - assets/image/Burger.png
+    - assets/image/TexasRoadHouse.png
+    - assets/image/GinYaki.png
+    - assets/image/ProfilePhoto2.jpeg
+    - assets/image/ChickenFajita.png
+    - assets/image/SmallPIzza.jpeg
+    - assets/image/DoubleDecker.jpeg
+    - assets/image/ChickenHawaian.png
+    - assets/image/ChickenFajita.png
+    - assets/image/pizzacategory.png
+    - assets/vector/Ar-Button.svg
+    - assets/image/location.png
+    - assets/images/partying_face_1.gif
+

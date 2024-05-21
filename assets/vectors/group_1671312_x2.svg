@@ -1,0 +1,5 @@
+<svg width="44" height="16" viewBox="0 0 44 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<line x1="15.845" y1="6.246" x2="0.216" y2="6.246" fill="#E73C34" stroke="#E73C34" stroke-width="2" stroke-miterlimit="3.999327" stroke-linecap="round"/>
+<line x1="43.978" y1="6.246" x2="15.845" y2="6.246" stroke="#E73C34" stroke-opacity="0.46" stroke-width="2" stroke-miterlimit="3.999327" stroke-linecap="round"/>
+<path d="M15.41,15.182C18.723,15.182 21.41,11.966 21.41,8C21.41,4.034 18.723,0.818 15.41,0.818C12.096,0.818 9.41,4.034 9.41,8C9.41,11.966 12.096,15.182 15.41,15.182Z" transform="rotate(-180 15.41 8)" fill="#E73C34" stroke="#E73C34" stroke-width="1.5" stroke-miterlimit="3.999327"/>
+</svg>
