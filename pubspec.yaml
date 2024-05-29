@@ -14,6 +14,10 @@ dependencies:
   google_fonts: ^6.2.1
   font_awesome_flutter: ^10.1.0
   flutter_rating_bar: ^4.0.0
+  firebase_auth: ^4.19.6
+  firebase_core: 2.31.1
+  cloud_firestore:
+
 
 
 dev_dependencies:
@@ -42,8 +46,14 @@ flutter:
     - assets/image/DoubleDecker.jpeg
     - assets/image/ChickenHawaian.png
     - assets/image/ChickenFajita.png
-    - assets/image/pizzacategory.png
     - assets/vector/Ar-Button.svg
     - assets/image/location.png
     - assets/images/partying_face_1.gif
+    - assets/image/pizzacategory.png
+    - assets/image/beveragecategory.png
+    - assets/image/Snackcategory.png
+    - assets/image/SeaFoodCategory.png
+    - assets/image/DessertCategory.png
+    - assets/image/pizzacategory2.png
+
 
