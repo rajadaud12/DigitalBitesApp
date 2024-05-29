@@ -1,106 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CustomBottomNavigationBar extends StatelessWidget {
-  final Color selectedItemColor;
-  final Color unselectedItemColor;
-  final int cartNotifications;
-  final int bellNotifications;
+import 'homePage.dart';
 
-  CustomBottomNavigationBar({
-    required this.selectedItemColor,
-    required this.unselectedItemColor,
-    this.cartNotifications = 0,
-    this.bellNotifications = 0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.white,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.menu),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Stack(
-            children: [
-              Icon(Icons.shopping_bag),
-              if (cartNotifications > 0)
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    constraints: BoxConstraints(
-                      minWidth: 12,
-                      minHeight: 12,
-                    ),
-                    child: Text(
-                      '$cartNotifications',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 8,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Stack(
-            children: [
-              Icon(Icons.notifications),
-              if (bellNotifications > 0)
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    constraints: BoxConstraints(
-                      minWidth: 12,
-                      minHeight: 12,
-                    ),
-                    child: Text(
-                      '$bellNotifications',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 8,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          label: '',
-        ),
-      ],
-      selectedItemColor: selectedItemColor,
-      unselectedItemColor: unselectedItemColor,
-    );
-  }
-}
 
 class ProductPage extends StatelessWidget {
+  final Item item;
+  ProductPage({required this.item});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +29,7 @@ class ProductPage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
-                    'assets/image/ChickenHawaian.png',
+                    item.image,
                     width: double.infinity,
                     height: 200,
                     fit: BoxFit.cover,
@@ -141,7 +46,7 @@ class ProductPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              'Chicken Hawaiian',
+              item.name,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
@@ -153,33 +58,33 @@ class ProductPage extends StatelessWidget {
                     Icon(Icons.star, color: Colors.orange, size: 16),
                     SizedBox(width: 4),
                     Text(
-                      '4.5',
+                      '${item.rating}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(width: 4),
-                    Text('(30+)', style: TextStyle(color: Colors.grey)),
+                    Text('(${item.reviews})+', style: TextStyle(color: Colors.grey)),
                     SizedBox(width: 4),
                     Text('See Reviews', style: TextStyle(color: Colors.red)),
                   ],
                 ),
-                Text('Cheezious', style: TextStyle(color: Colors.red)),
+                Text(item.restaurant, style: TextStyle(color: Colors.red)),
               ],
             ),
             SizedBox(height: 8),
             Row(
               children: [
                 Text(
-                  '\$9.50',
+                  '\$${item.price}',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
                 ),
-                SizedBox(width: 201),
+                Spacer(),
                 IconButton(
                   icon: Icon(Icons.remove, color: Colors.red),
                   onPressed: () {
                     // Decrease quantity logic
                   },
                 ),
-                Text('02', style: TextStyle(fontSize: 16)),
+                Text('01', style: TextStyle(fontSize: 16)),
                 IconButton(
                   icon: Icon(Icons.add, color: Colors.red),
                   onPressed: () {
@@ -210,7 +115,7 @@ class ProductPage extends StatelessWidget {
               groupValue: 'Pepper Julienned',
             ),
             AddOnOption(
-              name: 'Masroom',
+              name: 'Mushroom',
               price: 2.50,
               groupValue: 'Pepper Julienned',
             ),
@@ -218,7 +123,7 @@ class ProductPage extends StatelessWidget {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.pushNamed(context,'cartPage');
+                  Navigator.pushNamed(context, '/cartPage');
                 },
                 icon: Icon(Icons.shopping_cart, color: Colors.white),
                 label: Text('Add to cart', style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -233,7 +138,6 @@ class ProductPage extends StatelessWidget {
           ],
         ),
       ),
-
     );
   }
 }
@@ -269,4 +173,3 @@ class AddOnOption extends StatelessWidget {
     );
   }
 }
-

@@ -1,9 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
+
+  @override
+  _SignInPageState createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _signIn() async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign in successful!')),
+      );
+
+      // Navigate to the home page or other relevant page
+      Navigator.pushNamed(context, '/homePage');
+    } on FirebaseAuthException catch (e) {
+      String message;
+      print('FirebaseAuthException: ${e.code} - ${e.message}');
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided for that user.';
+      } else {
+        message = 'An error occurred. Please try again.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } catch (e) {
+      print('Unknown error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An unknown error occurred. Please try again.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +82,7 @@ class SignInPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Email TextField
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.person_outline, color: Colors.red),
                     labelText: 'Email or User Name',
@@ -55,6 +101,7 @@ class SignInPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Password TextField
                 TextField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.lock_outline, color: Colors.red),
@@ -97,9 +144,7 @@ class SignInPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/homePage');
-                    },
+                    onPressed: _signIn,
                     child: Text(
                       'Sign in',
                       style: GoogleFonts.poppins(),
@@ -220,10 +265,4 @@ class SignInPage extends StatelessWidget {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: SignInPage(),
-  ));
 }

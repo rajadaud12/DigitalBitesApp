@@ -1,27 +1,108 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/popularItem.dart';
+import 'package:flutter_app/restaurantCard.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:google_fonts/google_fonts.dart';
+import 'BrowseMenu.dart';
 import 'Product.dart';
+import 'category.dart';
+import 'navigationbar.dart';
 
 class HomePage extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final List<Category> categories = [
+    Category(
+      title: 'Beverages',
+      thumbnail:'assets/image/beveragecategory.png',
+      icon: 'assets/image/Beverages.png',
+      items: [
+      ],
+    ),
+    Category(
+      title: 'Snack',
+      thumbnail: 'assets/image/Snackcategory.png',
+      icon: 'assets/image/Snacks.png',
+      items: [
+      ],
+    ),
+    Category(
+      title: 'SeaFood',
+      thumbnail: 'assets/image/SeaFoodCategory.png',
+      icon: 'assets/image/SeaFood.png',
+      items: [
+      ],
+    ),
+    Category(
+      title: 'Dessert',
+      thumbnail: 'assets/image/DessertCategory.png',
+      icon: 'assets/image/Desserts.png',
+      items: [
+
+      ],
+    ),
+    Category(
+      title: 'Fast Food',
+      thumbnail: 'assets/image/pizzacategory2.png',
+      icon: 'assets/image/Burger.png',
+      items: [
+        Item(
+          name:'Chicken Hawaiian',
+          image:'assets/image/ChickenHawaian.png',
+          price:10.35,
+          restaurant: 'Cheezious',
+          detailedDescription: 'Indulge in a tropical twist with our Chicken Hawaiian Pizza! Savor the perfect combination of juicy chicken, sweet pineapple, and savory ham, all nestled on a bed of gooey mozzarella cheese. See Nutritional Facts',
+          description: 'Chicken, Cheese and pineapple',
+          rating: 4.5,
+          reviews: 25,
+        ),
+        Item(
+          price: 10.35,
+          image: 'assets/image/ChickenFajita.png',
+          name: 'Chicken Fajita',
+          restaurant: 'Pizza Hut',
+          detailedDescription: 'Indulge in a tropical twist with our Chicken Fajita Pizza! Savor the perfect combination of juicy chicken, sweet pineapple, and savory ham, all nestled on a bed of gooey mozzarella cheese. See Nutritional Facts',
+          description: 'Chicken, Cheese and mushroom',
+          rating: 4.5,
+          reviews: 25,
+        )
+
+
+      ],
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         leading: IconButton(
           icon: SvgPicture.asset('assets/vector/sidebar.svg'),
           onPressed: () {
-            // Handle sidebar menu opening
+           print(_auth.currentUser!.uid);
           },
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Deliver to', style: TextStyle(fontSize: 14)),
-            Text('4102 Pretty View Lane', style: TextStyle(fontSize: 18)),
-          ],
+        title: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:[
+                    Text('Deliver to',
+                    style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400)),
+                    Icon(Icons.arrow_drop_down)
+                  ]
+              ),
+              Text('4102 Pretty View Lane', style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400)),
+            ],
+          ),
         ),
         actions: [
           Container(
@@ -38,8 +119,10 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('What would you like to order', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              SizedBox(height: 16),
+              Text('What would you like to order', style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold)),
+              SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,23 +164,20 @@ class HomePage extends StatelessWidget {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: [
-                    CategoryCard(title: 'Beverages', icon: 'assets/image/Beverages.png', onTap: () {
-                      // Handle Beverages category tap
-                    }),
-                    CategoryCard(title: 'Snack', icon: 'assets/image/Snacks.png', onTap: () {
-                      // Handle Snack category tap
-                    }),
-                    CategoryCard(title: 'Seafood', icon: 'assets/image/SeaFood.png', onTap: () {
-                      // Handle Seafood category tap
-                    }),
-                    CategoryCard(title: 'Dessert', icon: 'assets/image/Desserts.png', onTap: () {
-                      // Handle Dessert category tap
-                    }),
-                    CategoryCard(title: 'Fast Food', icon: 'assets/image/Burger.png', onTap: () {
-                      Navigator.pushNamed(context,'browseMenu');
-                    }),
-                  ],
+                  children: categories.map((category) {
+                    return CategoryCard(
+                      title: category.title,
+                      icon: category.icon,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BrowseMenu(category: category),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
               SizedBox(height: 16),
@@ -227,231 +307,42 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class CategoryCard extends StatelessWidget {
+
+class Category {
   final String title;
+  final String thumbnail;
   final String icon;
-  final VoidCallback onTap;
+  final List<Item> items;
 
-  CategoryCard({required this.title, required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16.0),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Column(
-          children: [
-            ClipOval(
-              child: Container(
-                color: Colors.grey[200],
-                child: Image.asset(icon, height: 70, width: 70, fit: BoxFit.cover),
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(title),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RestaurantCard extends StatelessWidget {
-  final String name;
-  final double rating;
-  final String deliveryTime;
-  final bool freeDelivery;
-  final String icon;
-  final List<String> tags;
-  final VoidCallback onTap;
-
-  RestaurantCard({
-    required this.name,
-    required this.rating,
-    required this.deliveryTime,
-    required this.freeDelivery,
+  Category({
+    required this.thumbnail,
+    required this.title,
     required this.icon,
-    required this.tags,
-    required this.onTap,
+    required this.items,
   });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        color: Colors.white,
-        child: Container(
-          width: 300,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                    child: Image.asset(icon, height: 150, width: 300, fit: BoxFit.cover),
-                  ),
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.yellow, size: 16),
-                          SizedBox(width: 4),
-                          Text('$rating', style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text(' (${rating.toInt()}+)', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                      child: CircleAvatar(
-                          backgroundColor: Colors.red,
-                          child: Icon(Icons.favorite_sharp, color: Colors.white)),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    Row(
-                      children: [
-                        if (freeDelivery)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 4.0),
-                            child: Text('Free delivery', style: TextStyle(color: Colors.green, fontSize: 12)),
-                          ),
-                        Text(deliveryTime, style: TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                    Wrap(
-                      spacing: 4.0,
-                      children: tags.map((tag) => Chip(
-                        label: Text(tag),
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: BorderSide.none,
-                        ),
-                      )).toList(),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
-class PopularItemCard extends StatelessWidget {
-  final double price;
-  final String icon;
+class Item {
   final String name;
+  final String image;
+  final double price;
+  final String restaurant;
   final String description;
+  final String detailedDescription;
   final double rating;
   final int reviews;
 
-  PopularItemCard({
-    required this.price,
-    required this.icon,
+  Item({
     required this.name,
+    required this.detailedDescription,
+    required this.image,
+    required this.price,
+    required this.restaurant,
     required this.description,
     required this.rating,
     required this.reviews,
   });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 0.1,
-            blurRadius: 10,
-            offset: Offset(5, 5), // changes position of shadow
-          ),
-        ],
-      ),
-      child: Card(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                  child: Image.asset(icon, height: 100, width: double.infinity, fit: BoxFit.cover),
-                ),
-                Positioned(
-                  top: 8,
-                  left: 8,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.orange, size: 16),
-                        SizedBox(width: 4),
-                        Text('$rating', style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text(' ($reviews+)', style: TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.red,
-                      child: Icon(Icons.favorite_sharp, color: Colors.white)),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('\$$price', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text(description, style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-  }
-
 }
+
+
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'Product.dart';
+import 'navigationbar.dart';
 
 class CartPage extends StatelessWidget {
   @override
@@ -12,7 +13,7 @@ class CartPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.red),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context,'/homePage');
           },
         ),
         title: Text('Cart', style: TextStyle(color: Colors.black)),
@@ -47,7 +48,7 @@ class CartPage extends StatelessWidget {
                   height:50,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, 'checkout');
+                      Navigator.pushNamed(context, '/ checkout');
                     },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), backgroundColor: Colors.red,

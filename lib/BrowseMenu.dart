@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'Product.dart';
+import 'foodCard.dart';
+import 'homePage.dart';
+import 'navigationbar.dart';
 
 class BrowseMenu extends StatelessWidget {
+  final Category category;
+
+  BrowseMenu({required this.category});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,8 +23,8 @@ class BrowseMenu extends StatelessWidget {
             Stack(
               children: [
                 Container(
-                    padding: EdgeInsets.fromLTRB(100, 0, 0, 0),
-                    child: Image.asset('assets/image/pizzacategory.png', width: double.infinity)),
+                    padding: category.title=='Fast Food'?EdgeInsets.fromLTRB(145, 0, 0, 0):EdgeInsets.fromLTRB(100, 0, 0, 0),
+                    child: Image.asset(category.thumbnail, width: double.infinity)),
                 Positioned(
                   top: 30,
                   left: 0,
@@ -25,25 +35,7 @@ class BrowseMenu extends StatelessWidget {
                     },
                   ),
                 ),
-                Positioned(
-                    top: 150,
-                    left: 0,
-                    child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 90.0),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Pizza',
-                                  style: TextStyle(
-                                      fontSize: 45,
-                                      fontWeight: FontWeight.bold)),
-                              Text('Fast Food',
-                                  style: TextStyle(color: Colors.grey)),
-                              SizedBox(height: 4),
-                              Text('Total 4 results',
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 19)),
-                            ]))),
+
               ],
             ),
             Padding(
@@ -51,6 +43,22 @@ class BrowseMenu extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(category.title,
+                                style: GoogleFonts.poppins(
+                                    fontSize: 45,
+                                    fontWeight: FontWeight.bold)),
+                            Text(category.title,
+                                style: GoogleFonts.poppins(color: Colors.grey)),
+                            SizedBox(height: 15),
+                            Text('Total ${category.items.length} results',
+                                style: GoogleFonts.poppins(
+                                    color: Colors.grey, fontSize: 19)),
+                          ])),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -59,7 +67,7 @@ class BrowseMenu extends StatelessWidget {
                         child: TextField(
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.search),
-                            hintText: 'Find you favorite cuisine...',
+                            hintText: 'Find your favorite cuisine...',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -90,150 +98,77 @@ class BrowseMenu extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Sort by:', style: TextStyle(fontSize: 16)),
+                      Text('Sort by:', style: GoogleFonts.poppins(fontSize: 16)),
                       DropdownButton<String>(
                         value: 'Popular',
                         items: <String>['Popular', 'Price', 'Rating'].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Text(value, style: GoogleFonts.poppins()),
                           );
                         }).toList(),
                         onChanged: (String? newValue) {
                           // Handle sort option change
                         },
-                        style: TextStyle(color: Colors.red),
+                        style: GoogleFonts.poppins(color: Colors.red),
                         dropdownColor: Colors.white,
                         underline: Container(), // Remove underline
                       ),
                     ],
                   ),
                   SizedBox(height: 16),
-                  PizzaCard(
-                    price: 10.35,
-                    image: 'assets/image/ChickenHawaian.png',
-                    name: 'Chicken Hawaiian',
-                    restaurant: 'Cheezious',
-                    description: 'Chicken, Cheese and pineapple',
-                    rating: 4.5,
-                    reviews: 25,
-                    onTap: () {
-                      Navigator.pushNamed(context, 'productPage');
-                      // Handle card tap
-                      print('Chicken Hawaiian tapped');
-                    },
-                  ),
-                  PizzaCard(
-                    price: 10.35,
-                    image: 'assets/image/ChickenFajita.png',
-                    name: 'Chicken Fajita',
-                    restaurant: 'Pizza Hut',
-                    description: 'Chicken, Cheese and mushroom',
-                    rating: 4.5,
-                    reviews: 25,
-                    onTap: () {
-                      // Handle card tap
-                      print('Chicken Fajita tapped');
-                    },
-                  ),
+                  ...category.items.map((item) {
+                    return FoodCard(
+                      price: item.price,
+                      image: item.image,
+                      name: item.name,
+                      restaurant: item.restaurant,
+                      description: item.description,
+                      rating: item.rating,
+                      reviews: item.reviews,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductPage(item: item),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
                 ],
               ),
             ),
           ],
         ),
       ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedItemColor: Colors.red,
+        unselectedItemColor: Colors.grey,
+        cartNotifications: 2,
+        bellNotifications: 6,
+      ),
     );
   }
 }
 
-class PizzaCard extends StatelessWidget {
-  final double price;
-  final String image;
+
+class Product{
   final String name;
+  final String image;
+  final double price;
   final String restaurant;
   final String description;
   final double rating;
   final int reviews;
-  final VoidCallback onTap;
 
-  PizzaCard({
-    required this.price,
-    required this.image,
+  Product({
     required this.name,
+    required this.image,
+    required this.price,
     required this.restaurant,
     required this.description,
     required this.rating,
     required this.reviews,
-    required this.onTap,
   });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: InkWell(
-        onTap: onTap,
-        child: Card(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                    child: Image.asset(image, height: 200, width: double.infinity, fit: BoxFit.cover),
-                  ),
-                  Positioned(
-                    top: 16,
-                    left: 16,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text('\$$price', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: CircleAvatar(
-                        backgroundColor: Colors.red,
-                        child: Icon(Icons.favorite_sharp, color: Colors.white)),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(restaurant, style: TextStyle(color: Colors.grey)),
-                    SizedBox(height: 8),
-                    Text(description),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.orange, size: 16),
-                        SizedBox(width: 4),
-                        Text('$rating', style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text(' ($reviews+)', style: TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

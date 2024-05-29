@@ -1,9 +1,91 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
+import 'firebaseSingletonClass.dart';
+
+
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key}) : super(key: key);
+
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuthService.instance.auth;
+  final FirebaseFirestore _firestore = FirestoreService.instance.firestore;
+
+  Future<void> _signUp() async {
+    try {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        _showSnackBar('Passwords do not match');
+        return;
+      }
+
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      await userCredential.user?.updateDisplayName(_fullNameController.text.trim());
+
+      await _saveUserData(userCredential);
+
+      _showSnackBar('Sign up successful!');
+      Navigator.pushNamed(context, '/signIn');
+    } on FirebaseAuthException catch (e) {
+      _handleFirebaseAuthError(e);
+    } catch (e) {
+      _showSnackBar('An unknown error occurred. Please try again.');
+    }
+  }
+
+  Future<void> _saveUserData(UserCredential userCredential) async {
+    try {
+      await _firestore.collection('users').doc(userCredential.user?.uid).set({
+        'fullName': _fullNameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      _showSnackBar('An error occurred while saving user data. Please try again.');
+    }
+  }
+
+  void _handleFirebaseAuthError(FirebaseAuthException e) {
+    String message;
+    switch (e.code) {
+      case 'weak-password':
+        message = 'The password provided is too weak.';
+        break;
+      case 'email-already-in-use':
+        message = 'The account already exists for that email.';
+        break;
+      case 'invalid-email':
+        message = 'The email address is not valid.';
+        break;
+      case 'operation-not-allowed':
+        message = 'Email/password accounts are not enabled.';
+        break;
+      default:
+        message = 'An error occurred. Please try again.';
+    }
+    _showSnackBar(message);
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,232 +98,180 @@ class SignUpPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 50),
-                // Logo
                 Image.asset(
                   'assets/image/Logo.png',
                   height: 100,
                 ),
                 const SizedBox(height: 20),
-                // Sign up text
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Sign Up',
-                    style: GoogleFonts.poppins(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.red,
-                    ),
-                  ),
+                _buildTitle(),
+                const SizedBox(height: 20),
+                _buildTextField(
+                  controller: _fullNameController,
+                  icon: Icons.person_outline,
+                  labelText: 'Full Name',
                 ),
                 const SizedBox(height: 20),
-                // Full Name TextField
-                TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.person_outline, color: Colors.red),
-                    labelText: 'Full Name',
-                    labelStyle: GoogleFonts.poppins(color: Colors.black),
-                    floatingLabelStyle: GoogleFonts.poppins(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red),
-                    ),
-                  ),
+                _buildTextField(
+                  controller: _emailController,
+                  icon: Icons.email_outlined,
+                  labelText: 'Email',
                 ),
                 const SizedBox(height: 20),
-                // Email TextField
-                TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.email_outlined, color: Colors.red),
-                    labelText: 'Email',
-                    labelStyle: GoogleFonts.poppins(color: Colors.black),
-                    floatingLabelStyle: GoogleFonts.poppins(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Password TextField
-                TextField(
+                _buildTextField(
+                  controller: _passwordController,
+                  icon: Icons.lock_outline,
+                  labelText: 'Password',
                   obscureText: true,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock_outline, color: Colors.red),
-                    suffixIcon: const Icon(Icons.visibility, color: Colors.red),
-                    labelText: 'Password',
-                    labelStyle: GoogleFonts.poppins(color: Colors.black),
-                    floatingLabelStyle: GoogleFonts.poppins(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red),
-                    ),
-                  ),
+                  suffixIcon: Icons.visibility,
                 ),
                 const SizedBox(height: 20),
-                // Confirm Password TextField
-                TextField(
+                _buildTextField(
+                  controller: _confirmPasswordController,
+                  icon: Icons.lock_outline,
+                  labelText: 'Confirm Password',
                   obscureText: true,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock_outline, color: Colors.red),
-                    suffixIcon: const Icon(Icons.visibility, color: Colors.red),
-                    labelText: 'Confirm Password',
-                    labelStyle: GoogleFonts.poppins(color: Colors.black),
-                    floatingLabelStyle: GoogleFonts.poppins(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red),
-                    ),
-                  ),
+                  suffixIcon: Icons.visibility,
                 ),
                 const SizedBox(height: 20),
-                // Sign up button
-                SizedBox(
-                  width: double.infinity,
-                  height: 45,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Text(
-                      'Sign Up',
-                      style: GoogleFonts.poppins(),
-                    ),
-                  ),
-                ),
+                _buildSignUpButton(),
                 const SizedBox(height: 20),
-                // Or sign up with
-                Text(
-                  'Or sign up with',
-                  style: GoogleFonts.poppins(),
-                ),
+                _buildOrSignUpWithText(),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: const FaIcon(FontAwesomeIcons.google, color: Colors.red),
-                        onPressed: () {},
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: const FaIcon(FontAwesomeIcons.facebook, color: Colors.red),
-                        onPressed: () {},
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: const FaIcon(FontAwesomeIcons.twitter, color: Colors.red),
-                        onPressed: () {},
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: const FaIcon(FontAwesomeIcons.linkedin, color: Colors.red),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
+                _buildSocialIcons(),
                 const SizedBox(height: 20),
-                // Sign in
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Already have an account? ",
-                      style: GoogleFonts.poppins(),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/signIn');
-                      },
-                      child: Text(
-                        'Sign In',
-                        style: GoogleFonts.poppins(color: Colors.red),
-                      ),
-                    ),
-                  ],
-                ),
+                _buildSignInText(),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        'Sign Up',
+        style: GoogleFonts.poppins(
+          fontSize: 30,
+          fontWeight: FontWeight.w500,
+          color: Colors.red,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required IconData icon,
+    required String labelText,
+    bool obscureText = false,
+    IconData? suffixIcon,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.red),
+        labelText: labelText,
+        labelStyle: GoogleFonts.poppins(color: Colors.black),
+        floatingLabelStyle: GoogleFonts.poppins(color: Colors.black),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        suffixIcon: suffixIcon != null ? Icon(suffixIcon, color: Colors.red) : null,
+      ),
+    );
+  }
+
+  Widget _buildSignUpButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 45,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.red,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed: _signUp,
+        child: Text(
+          'Sign Up',
+          style: GoogleFonts.poppins(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrSignUpWithText() {
+    return Text(
+      'Or sign up with',
+      style: GoogleFonts.poppins(),
+    );
+  }
+
+  Widget _buildSocialIcons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildSocialIconButton(FontAwesomeIcons.google, () {}),
+        const SizedBox(width: 10),
+        _buildSocialIconButton(FontAwesomeIcons.facebook, () {}),
+        const SizedBox(width: 10),
+        _buildSocialIconButton(FontAwesomeIcons.twitter, () {}),
+        const SizedBox(width: 10),
+        _buildSocialIconButton(FontAwesomeIcons.linkedin, () {}),
+      ],
+    );
+  }
+
+  Widget _buildSocialIconButton(IconData icon, VoidCallback onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: FaIcon(icon, color: Colors.red),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  Widget _buildSignInText() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Already have an account? ",
+          style: GoogleFonts.poppins(),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/signIn');
+          },
+          child: Text(
+            'Sign In',
+            style: GoogleFonts.poppins(color: Colors.red),
+          ),
+        ),
+      ],
     );
   }
 }
