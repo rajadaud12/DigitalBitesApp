@@ -6,29 +6,30 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'BrowseMenu.dart';
 import 'Product.dart';
+import 'cardBase.dart';
 import 'category.dart';
 
 
-class FoodCard extends StatelessWidget {
+class FoodCard extends CardBase {
   final double price;
-  final String image;
-  final String name;
   final String restaurant;
   final String description;
-  final double rating;
   final int reviews;
-  final VoidCallback onTap;
 
   FoodCard({
-    required this.price,
-    required this.image,
-    required this.name,
-    required this.restaurant,
-    required this.description,
-    required this.rating,
-    required this.reviews,
-    required this.onTap,
-  });
+    required double price,
+    required String image,
+    required String name,
+    required String restaurant,
+    required String description,
+    required double rating,
+    required int reviews,
+    required VoidCallback onTap,
+  })  : this.price = price,
+        this.restaurant = restaurant,
+        this.description = description,
+        this.reviews = reviews,
+        super(icon: image, name: name, rating: rating, onTap: onTap);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,7 @@ class FoodCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
-                  child: Image.asset(image, height: 200, width: double.infinity, fit: BoxFit.cover),
+                  child: Image.asset(icon, height: 200, width: double.infinity, fit: BoxFit.cover),
                 ),
                 Positioned(
                   top: 10,

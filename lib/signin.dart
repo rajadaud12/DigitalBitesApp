@@ -3,6 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'firebaseSingletonClass.dart';
+
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -14,7 +16,7 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuthService.instance.auth;
 
   Future<void> _signIn() async {
     try {

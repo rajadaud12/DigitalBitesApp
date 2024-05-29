@@ -6,40 +6,37 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'BrowseMenu.dart';
 import 'Product.dart';
+import 'cardBase.dart';
 import 'category.dart';
 import 'navigationbar.dart';
 
 class HomePage extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   final List<Category> categories = [
     Category(
       title: 'Beverages',
-      thumbnail:'assets/image/beveragecategory.png',
+      thumbnail: 'assets/image/beveragecategory.png',
       icon: 'assets/image/Beverages.png',
-      items: [
-      ],
+      items: [],
     ),
     Category(
       title: 'Snack',
       thumbnail: 'assets/image/Snackcategory.png',
       icon: 'assets/image/Snacks.png',
-      items: [
-      ],
+      items: [],
     ),
     Category(
       title: 'SeaFood',
       thumbnail: 'assets/image/SeaFoodCategory.png',
       icon: 'assets/image/SeaFood.png',
-      items: [
-      ],
+      items: [],
     ),
     Category(
       title: 'Dessert',
       thumbnail: 'assets/image/DessertCategory.png',
       icon: 'assets/image/Desserts.png',
-      items: [
-
-      ],
+      items: [],
     ),
     Category(
       title: 'Fast Food',
@@ -47,11 +44,12 @@ class HomePage extends StatelessWidget {
       icon: 'assets/image/Burger.png',
       items: [
         Item(
-          name:'Chicken Hawaiian',
-          image:'assets/image/ChickenHawaian.png',
-          price:10.35,
+          name: 'Chicken Hawaiian',
+          image: 'assets/image/ChickenHawaian.png',
+          price: 10.35,
           restaurant: 'Cheezious',
-          detailedDescription: 'Indulge in a tropical twist with our Chicken Hawaiian Pizza! Savor the perfect combination of juicy chicken, sweet pineapple, and savory ham, all nestled on a bed of gooey mozzarella cheese. See Nutritional Facts',
+          detailedDescription:
+          'Indulge in a tropical twist with our Chicken Hawaiian Pizza! Savor the perfect combination of juicy chicken, sweet pineapple, and savory ham, all nestled on a bed of gooey mozzarella cheese. See Nutritional Facts',
           description: 'Chicken, Cheese and pineapple',
           rating: 4.5,
           reviews: 25,
@@ -61,16 +59,63 @@ class HomePage extends StatelessWidget {
           image: 'assets/image/ChickenFajita.png',
           name: 'Chicken Fajita',
           restaurant: 'Pizza Hut',
-          detailedDescription: 'Indulge in a tropical twist with our Chicken Fajita Pizza! Savor the perfect combination of juicy chicken, sweet pineapple, and savory ham, all nestled on a bed of gooey mozzarella cheese. See Nutritional Facts',
+          detailedDescription:
+          'Indulge in a tropical twist with our Chicken Fajita Pizza! Savor the perfect combination of juicy chicken, sweet pineapple, and savory ham, all nestled on a bed of gooey mozzarella cheese. See Nutritional Facts',
           description: 'Chicken, Cheese and mushroom',
           rating: 4.5,
           reviews: 25,
-        )
-
-
+        ),
       ],
     ),
   ];
+
+  final List<CardBase> cards = [
+    RestaurantCard(
+      name: 'Texas Road House',
+      rating: 4.5,
+      deliveryTime: '10-15 mins',
+      freeDelivery: true,
+      icon: 'assets/image/TexasRoadHouse.png',
+      tags: ['Burger', 'Chicken', 'Fast Food'],
+      onTap: () {
+        // Handle restaurant card tap
+      },
+    ),
+    RestaurantCard(
+      name: 'Gin Yaki',
+      rating: 4.7,
+      deliveryTime: '10-15 mins',
+      freeDelivery: true,
+      icon: 'assets/image/GinYaki.png',
+      tags: ['Ramen', 'Chicken'],
+      onTap: () {
+        // Handle restaurant card tap
+      },
+    ),
+    PopularItemCard(
+      price: 5.50,
+      icon: 'assets/image/SmallPIzza.jpeg',
+      name: 'Salmon Salad',
+      description: 'Baked salmon fish',
+      rating: 4.5,
+      reviews: 25,
+      onTap: () {
+        // Handle popular item card tap
+      },
+    ),
+    PopularItemCard(
+      price: 5.50,
+      icon: 'assets/image/DoubleDecker.jpeg',
+      name: 'Salmon Salad',
+      description: 'Baked salmon fish',
+      rating: 4.5,
+      reviews: 25,
+      onTap: () {
+        // Handle popular item card tap
+      },
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,26 +126,22 @@ class HomePage extends StatelessWidget {
         leading: IconButton(
           icon: SvgPicture.asset('assets/vector/sidebar.svg'),
           onPressed: () {
-           print(_auth.currentUser!.uid);
+            print(_auth.currentUser!.uid);
           },
         ),
         title: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children:[
-                    Text('Deliver to',
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text('Deliver to',
                     style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400)),
-                    Icon(Icons.arrow_drop_down)
-                  ]
-              ),
-              Text('4102 Pretty View Lane', style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400)),
+                        fontSize: 14, fontWeight: FontWeight.w400)),
+                Icon(Icons.arrow_drop_down)
+              ]),
+              Text('4102 Pretty View Lane',
+                  style: GoogleFonts.poppins(
+                      fontSize: 14, fontWeight: FontWeight.w400)),
             ],
           ),
         ),
@@ -119,9 +160,9 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('What would you like to order', style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold)),
+              Text('What would you like to order',
+                  style: GoogleFonts.poppins(
+                      fontSize: 24, fontWeight: FontWeight.bold)),
               SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -159,7 +200,8 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 16),
-              Text('Top Categories', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('Top Categories',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: 16),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -184,17 +226,17 @@ class HomePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Featured Restaurants', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text('Featured Restaurants',
+                      style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   TextButton(
                     onPressed: () {
                       // Handle View All tap
                     },
                     child: Text('View All',
-                    style:TextStyle(
-                      color: Colors.red,
-                    )
-
-                    ),
+                        style: TextStyle(
+                          color: Colors.red,
+                        )),
                   ),
                 ],
               ),
@@ -202,47 +244,31 @@ class HomePage extends StatelessWidget {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: [
-                    RestaurantCard(
-                      name: 'Texas Road House',
-                      rating: 4.5,
-                      deliveryTime: '10-15 mins',
-                      freeDelivery: true,
-                      icon: 'assets/image/TexasRoadHouse.png',
-                      tags: ['Burger', 'Chicken', 'Fast Food'],
-                      onTap: () {
-                        // Handle restaurant card tap
-                      },
-                    ),
-                    RestaurantCard(
-                      name: 'Gin Yaki',
-                      rating: 4.7,
-                      deliveryTime: '10-15 mins',
-                      freeDelivery: true,
-                      icon: 'assets/image/GinYaki.png',
-                      tags: ['Ramen', 'Chicken'],
-                      onTap: () {
-                        // Handle restaurant card tap
-                      },
-                    ),
-                  ],
+                  children: cards
+                      .where((card) => card is RestaurantCard)
+                      .map((card) => Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: card,
+                  ))
+                      .toList()
+                      .cast<Widget>(),
                 ),
               ),
               SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Popular Items', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text('Popular Items',
+                      style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   TextButton(
                     onPressed: () {
                       // Handle View All tap
                     },
                     child: Text('View All',
-                        style:TextStyle(
+                        style: TextStyle(
                           color: Colors.red,
-                        )
-
-                    ),
+                        )),
                   ),
                 ],
               ),
@@ -252,44 +278,14 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
                   child: Row(
-                    children: [
-                      PopularItemCard(
-                        price: 5.50,
-                        icon: 'assets/image/SmallPIzza.jpeg',
-                        name: 'Salmon Salad',
-                        description: 'Baked salmon fish',
-                        rating: 4.5,
-                        reviews: 25,
-                      ),
-                      SizedBox(width: 10),
-                      PopularItemCard(
-                        price: 5.50,
-                        icon: 'assets/image/DoubleDecker.jpeg',
-                        name: 'Salmon Salad',
-                        description: 'Baked salmon fish',
-                        rating: 4.5,
-                        reviews: 25,
-                      ),
-                      SizedBox(width: 10),
-                      PopularItemCard(
-                        price: 5.50,
-                        icon: 'assets/image/SmallPIzza.jpeg',
-                        name: 'Salmon Salad',
-                        description: 'Baked salmon fish',
-                        rating: 4.5,
-                        reviews: 25,
-                      ),
-                      SizedBox(width: 10),
-
-                      PopularItemCard(
-                        price: 5.50,
-                        icon: 'assets/image/DoubleDecker.jpeg',
-                        name: 'Salmon Salad',
-                        description: 'Baked salmon fish',
-                        rating: 4.5,
-                        reviews: 25,
-                      ),
-                    ],
+                    children: cards
+                        .where((card) => card is PopularItemCard)
+                        .map((card) => Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: card,
+                    ))
+                        .toList()
+                        .cast<Widget>(),
                   ),
                 ),
               ),
@@ -306,7 +302,6 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
 
 class Category {
   final String title;
@@ -343,6 +338,3 @@ class Item {
     required this.reviews,
   });
 }
-
-
-

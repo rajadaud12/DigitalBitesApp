@@ -3,22 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class PopularItemCard extends StatelessWidget {
+import 'cardBase.dart';
+
+class PopularItemCard extends CardBase {
   final double price;
-  final String icon;
-  final String name;
   final String description;
-  final double rating;
   final int reviews;
 
   PopularItemCard({
-    required this.price,
-    required this.icon,
-    required this.name,
-    required this.description,
-    required this.rating,
-    required this.reviews,
-  });
+    required double price,
+    required String icon,
+    required String name,
+    required String description,
+    required double rating,
+    required int reviews,
+    required VoidCallback onTap,
+  })  : this.price = price,
+        this.description = description,
+        this.reviews = reviews,
+        super(icon: icon, name: name, rating: rating, onTap: onTap);
 
   @override
   Widget build(BuildContext context) {
@@ -91,8 +94,5 @@ class PopularItemCard extends StatelessWidget {
         ),
       ),
     );
-
   }
-
 }
-

@@ -3,24 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class RestaurantCard extends StatelessWidget {
-  final String name;
-  final double rating;
+import 'cardBase.dart';
+
+class RestaurantCard extends CardBase {
   final String deliveryTime;
   final bool freeDelivery;
-  final String icon;
   final List<String> tags;
-  final VoidCallback onTap;
 
   RestaurantCard({
-    required this.name,
-    required this.rating,
+    required String name,
+    required double rating,
     required this.deliveryTime,
     required this.freeDelivery,
-    required this.icon,
+    required String icon,
     required this.tags,
-    required this.onTap,
-  });
+    required VoidCallback onTap,
+  }) : super(icon: icon, name: name, rating: rating, onTap: onTap);
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +63,9 @@ class RestaurantCard extends StatelessWidget {
                     top: 8,
                     right: 8,
                     child: CircleAvatar(
-                        backgroundColor: Colors.red,
-                        child: Icon(Icons.favorite_sharp, color: Colors.white)),
+                      backgroundColor: Colors.red,
+                      child: Icon(Icons.favorite_sharp, color: Colors.white),
+                    ),
                   ),
                 ],
               ),
